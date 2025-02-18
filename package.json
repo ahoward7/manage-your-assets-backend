@@ -1,0 +1,27 @@
+{
+  "name": "mya-backend",
+  "version": "0.0.0",
+  "description": "Manage Your Assets Express.js Backend",
+  "main": "index.js",
+  "scripts": {
+    "test": "test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ahoward7/manage-your-assets-backend.git"
+  },
+  "keywords": [
+    "express.js",
+    "node.js",
+    "backend"
+  ],
+  "author": "Avery Howard",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/ahoward7/manage-your-assets-backend/issues"
+  },
+  "homepage": "https://github.com/ahoward7/manage-your-assets-backend#readme",
+  "dependencies": {
+    "express": "^4.21.2"
+  }
+}
