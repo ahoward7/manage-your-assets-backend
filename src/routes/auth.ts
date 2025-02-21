@@ -32,9 +32,11 @@ router.post('/google', async (req, res) => {
     const googleApi = `https://www.googleapis.com/oauth2/v3/userinfo?access_token=${access_token}`
     const googleAccount = await $fetch(googleApi)
 
-    const { email } = googleAccount as GoogleAccount
+    const { email, picture } = googleAccount as GoogleAccount
 
     const potentialAccount = await Account.findOne({ email })
+
+    console.log(potentialAccount)
 
     if (!potentialAccount) {
       const userFromGoogle = userFromGoogleAccount(googleAccount)
@@ -51,9 +53,15 @@ router.post('/google', async (req, res) => {
     }
 
     if (potentialAccount.client === 'mya') {
-      const mergedAccount = new Account({ ...potentialAccount, client: 'merged' })
+      const mergedAccount = { ...potentialAccount.toObject(), client: 'merged' }
+
+      console.log(mergedAccount)
+
       await Account.updateOne({ email }, mergedAccount)
-      await User.updateOne({ _id: potentialAccount.user }, { image: googleAccount.picture })
+      await User.updateOne({ _id: potentialAccount.user }, { image: picture })
+
+      console.log('updated')
+
       res.status(200).json(mergedAccount)
       return
     }
