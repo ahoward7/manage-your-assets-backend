@@ -5,11 +5,20 @@ import userRoutes from "./routes/user"
 import accountRoutes from "./routes/account"
 import profileRoutes from "./routes/profile"
 import authRoutes from "./routes/auth"
+import mongoose from "mongoose"
 
 dotenv.config()
 
 const app: Express = express()
 const port = process.env.PORT || 8000
+
+const mongoUri = process.env.MONGO_URI || ''
+
+mongoose.connect(mongoUri).then(() => {
+  console.log('MongoDB connected')
+}).catch((error) => {
+  console.error('MongoDB connection error:', error)
+})
 
 app.use(cors({
   origin: "http://localhost:3000",
