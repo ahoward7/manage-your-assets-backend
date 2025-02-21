@@ -1,6 +1,6 @@
 export type AuthMode = 'create' | 'login' | 'google' | 'profile'
 export type ModelEndpoint = 'user' | 'account' | 'profile'
-export type MongoModel = User | Account | Profile
+export type MongoModel = MyaUser | MyaAccount | MyaProfile
 export type UserRole = 'admin' | 'employee' | 'external' | ''
 export type AccountClient = 'google' | 'mya'
 
@@ -10,14 +10,14 @@ interface BaseEntity {
 }
 
 // User
-interface BaseUser {
+export interface BaseUser {
   firstName: string
   lastName: string
   email: string
   image: string
 }
 
-export interface User extends BaseEntity, BaseUser { }
+export interface MyaUser extends BaseEntity, BaseUser { }
 export interface NewUser extends BaseUser { }
 
 // Account
@@ -29,7 +29,7 @@ export interface BaseAccount {
   isMerged: boolean
 }
 
-export interface Account extends BaseEntity, BaseAccount { }
+export interface MyaAccount extends BaseEntity, BaseAccount { }
 export interface NewAccount extends BaseAccount { }
 
 // Profile
@@ -41,7 +41,7 @@ export interface BaseProfile {
   completed: boolean
 }
 
-export interface Profile extends BaseEntity, BaseProfile { }
+export interface MyaProfile extends BaseEntity, BaseProfile { }
 export interface NewProfile extends BaseProfile { }
 
 // Login Form
@@ -63,10 +63,11 @@ export interface GoogleJWT {
 }
 
 export interface GoogleAccount {
-  client: 'google'
-  firstName: string
-  lastName: string
   email: string
-  image: string
-  password: string | 'SET_BY_GOOGLE'
+  email_verified: boolean
+  given_name: string
+  family_name: string
+  name: string
+  picture: string
+  sub: string
 }

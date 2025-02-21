@@ -1,12 +1,68 @@
 import { Router } from 'express'
 import Account from '../models/Account'
 import User from '../models/User'
-import { LoginForm } from '../../interfaces/auth'
+import { LoginForm, GoogleAccount, BaseAccount, BaseUser, MyaUser } from '../../interfaces/auth'
+import { $fetch } from 'ofetch'
+
+function accountFromGoogleAccount(googleAccount: GoogleAccount): BaseAccount {
+  return {
+    user: '',
+    client: 'google',
+    email: googleAccount.email,
+    password: '',
+    isMerged: false,
+  }
+}
+
+function userFromGoogleAccount(googleAccount: GoogleAccount): BaseUser {
+  return {
+    firstName: googleAccount.given_name,
+    lastName: googleAccount.family_name,
+    email: googleAccount.email,
+    image: googleAccount.picture,
+  }
+}
 
 const router = Router()
 
-router.post('/google', (req, res) => {
-  res.send('google login')
+router.post('/google', async (req, res) => {
+  try {
+    const { access_token } = req.body
+
+    const googleApi = `https://www.googleapis.com/oauth2/v3/userinfo?access_token=${access_token}`
+    const googleAccount = await $fetch(googleApi)
+
+    const { email } = googleAccount as GoogleAccount
+
+    const potentialAccount = await Account.findOne({ email })
+
+    if (!potentialAccount) {
+      const userFromGoogle = userFromGoogleAccount(googleAccount)
+      const accountFromGoogle = accountFromGoogleAccount(googleAccount)
+
+      const newUser = new User(userFromGoogle)
+      const newAccount = new Account({ ...accountFromGoogle, user: newUser._id })
+
+      newUser.save()
+      newAccount.save()
+
+      res.status(201).json(newUser)
+      return
+    }
+
+    if (potentialAccount.client === 'mya') {
+      const mergedAccount = new Account({ ...potentialAccount, client: 'merged' })
+      await Account.updateOne({ email }, mergedAccount)
+      await User.updateOne({ _id: potentialAccount.user }, { image: googleAccount.picture })
+      res.status(200).json(mergedAccount)
+      return
+    }
+
+    res.status(200).json(potentialAccount)
+  }
+  catch (error) {
+    res.status(500).send(error.message)
+  }
 })
 
 router.post('/login', async (req, res) => {
@@ -19,12 +75,17 @@ router.post('/login', async (req, res) => {
       return
     }
 
+    if (potentialAccount.client === 'google') {
+      res.status(409).send('Found google account')
+      return
+    }
+
     if (potentialAccount.password !== password) {
       res.status(401).send('Invalid credentials')
       return
     }
 
-    res.json(potentialAccount)
+    res.status(200).json(potentialAccount)
   }
   catch (error) {
     res.status(500).send(error.message)
@@ -44,13 +105,16 @@ router.post('/register', async (req, res) => {
 
       const mergedAccount = new Account({ ...potentialAccount, client: 'merged' })
       await Account.updateOne({ email }, mergedAccount)
+      await User.updateOne({ _id: potentialAccount.user }, { firstName, lastName, email, image })
 
-      res.status(200).json(mergedAccount)
+      const user = await User.findById(potentialAccount.user)
+
+      res.status(200).json(user)
       return
     }
 
     const newUser = new User({ firstName, lastName, email, image })
-    const newAccount = new Account({ user: newUser._id, firstName, lastName, email, password })
+    const newAccount = new Account({ user: newUser._id, email, password, client })
 
     newUser.save()
     newAccount.save()
