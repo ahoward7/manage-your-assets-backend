@@ -2,9 +2,11 @@
   "name": "mya-backend",
   "version": "0.0.0",
   "description": "Manage Your Assets Express.js Backend",
-  "main": "index.js",
+  "type": "module",
+  "main": "src/index.ts",
   "scripts": {
-    "test": "test"
+    "test": "test",
+    "dev": "nodemon --exec tsx src/index.ts"
   },
   "repository": {
     "type": "git",
@@ -22,6 +24,14 @@
   },
   "homepage": "https://github.com/ahoward7/manage-your-assets-backend#readme",
   "dependencies": {
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.7",
     "express": "^4.21.2"
+  },
+  "devDependencies": {
+    "@types/express": "^5.0.0",
+    "@types/node": "^22.13.4",
+    "tsx": "^4.19.2",
+    "typescript": "^5.7.3"
   }
 }
