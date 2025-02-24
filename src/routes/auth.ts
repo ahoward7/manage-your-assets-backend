@@ -27,9 +27,16 @@ const router = Router()
 
 router.post('/google', async (req, res) => {
   try {
-    const { access_token } = req.body
+    const accessTokenHeader = req.headers.authorization
 
-    const googleApi = `https://www.googleapis.com/oauth2/v3/userinfo?access_token=${access_token}`
+    if (!accessTokenHeader || !accessTokenHeader.startsWith('Bearer ')) {
+      res.status(401).send('Unauthorized: Bearer token not found')
+      return
+    }
+
+    const accessToken = accessTokenHeader.split(' ')[1]
+
+    const googleApi = `https://www.googleapis.com/oauth2/v3/userinfo?access_token=${accessToken}`
     const googleAccount = await $fetch(googleApi)
 
     const { email, picture } = googleAccount as GoogleAccount
