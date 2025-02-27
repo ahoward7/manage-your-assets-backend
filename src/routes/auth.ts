@@ -126,7 +126,7 @@ router.post('/register', async (req, res) => {
         return
       }
 
-      const mergedAccount = new Account({ ...potentialAccount, client: 'merged' })
+      const mergedAccount = new Account({ ...potentialAccount.toObject(), client: 'merged' })
       await Account.updateOne({ email }, mergedAccount)
       await User.updateOne({ _id: potentialAccount.user }, { firstName, lastName, email, image })
 
