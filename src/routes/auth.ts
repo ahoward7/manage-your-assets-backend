@@ -2,7 +2,6 @@ import { Router } from 'express'
 import Account from '../models/Account'
 import User from '../models/User'
 import { LoginForm, GoogleAccount, BaseAccount, BaseUser, MyaUser } from '../../interfaces/auth'
-import { $fetch } from 'ofetch'
 
 function accountFromGoogleAccount(googleAccount: GoogleAccount): BaseAccount {
   return {
@@ -27,17 +26,7 @@ const router = Router()
 
 router.post('/google', async (req, res) => {
   try {
-    const accessTokenHeader = req.headers.authorization
-
-    if (!accessTokenHeader || !accessTokenHeader.startsWith('Bearer ')) {
-      res.status(401).send('Unauthorized: Bearer token not found')
-      return
-    }
-
-    const accessToken = accessTokenHeader.split(' ')[1]
-
-    const googleApi = `https://www.googleapis.com/oauth2/v3/userinfo?access_token=${accessToken}`
-    const googleAccount = await $fetch(googleApi)
+    const { user: googleAccount } = req.body
 
     const { email, picture } = googleAccount as GoogleAccount
 
@@ -126,7 +115,7 @@ router.post('/register', async (req, res) => {
         return
       }
 
-      const mergedAccount = new Account({ ...potentialAccount.toObject(), client: 'merged' })
+      const mergedAccount = new Account({ ...potentialAccount.toObject(), client: 'merged', password })
       await Account.updateOne({ email }, mergedAccount)
       await User.updateOne({ _id: potentialAccount.user }, { firstName, lastName, email, image })
 
