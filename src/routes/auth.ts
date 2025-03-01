@@ -2,6 +2,7 @@ import { Router } from 'express'
 import Account from '../models/Account'
 import User from '../models/User'
 import { LoginForm, GoogleAccount, BaseAccount, BaseUser, MyaUser } from '../../interfaces/auth'
+import bcrypt from 'bcrypt'
 
 function accountFromGoogleAccount(googleAccount: GoogleAccount): BaseAccount {
   return {
@@ -20,6 +21,10 @@ function userFromGoogleAccount(googleAccount: GoogleAccount): BaseUser {
     email: googleAccount.email,
     image: googleAccount.picture,
   }
+}
+
+async function verifyPassword(plainPassword: string, hashedPassword: string): Promise<boolean> {
+  return await bcrypt.compare(plainPassword, hashedPassword);
 }
 
 const router = Router()
@@ -85,7 +90,7 @@ router.post('/login', async (req, res) => {
       return
     }
 
-    if (potentialAccount.password !== password) {
+    if (!verifyPassword(password, potentialAccount.password)) {
       res.status(401).send('Invalid credentials')
       return
     }
