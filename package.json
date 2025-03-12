@@ -24,12 +24,14 @@
   },
   "homepage": "https://github.com/ahoward7/manage-your-assets-backend#readme",
   "dependencies": {
-    "bcrypt": "^5.1.1",
+    "@types/xlsx": "^0.0.35",
+    "bcryptjs": "^3.0.2",
     "cors": "^2.8.5",
     "dotenv": "^16.4.7",
     "express": "^4.21.2",
     "mongoose": "^8.10.1",
-    "ofetch": "^1.4.1"
+    "ofetch": "^1.4.1",
+    "xlsx": "^0.18.5"
   },
   "devDependencies": {
     "@types/express": "^5.0.0",

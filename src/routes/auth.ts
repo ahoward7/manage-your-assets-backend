@@ -2,7 +2,7 @@ import { Router } from 'express'
 import Account from '../models/Account'
 import User from '../models/User'
 import { LoginForm, GoogleAccount, BaseAccount, BaseUser, MyaUser } from '../../interfaces/auth'
-import bcrypt from 'bcrypt'
+import bcryptjs from 'bcryptjs'
 
 function accountFromGoogleAccount(googleAccount: GoogleAccount): BaseAccount {
   return {
@@ -24,7 +24,7 @@ function userFromGoogleAccount(googleAccount: GoogleAccount): BaseUser {
 }
 
 async function verifyPassword(plainPassword: string, hashedPassword: string): Promise<boolean> {
-  return await bcrypt.compare(plainPassword, hashedPassword);
+  return bcryptjs.compareSync(plainPassword, hashedPassword);
 }
 
 const router = Router()
