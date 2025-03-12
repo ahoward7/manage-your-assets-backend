@@ -10,4 +10,4 @@ const AssetSchema = new Schema({
   owner: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
 })
 
-export default model('AssetSchema', AssetSchema, 'assetSchemas')
+export default model('Asset', AssetSchema, 'assets')
