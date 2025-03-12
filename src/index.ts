@@ -5,6 +5,7 @@ import userRoutes from "./routes/user"
 import accountRoutes from "./routes/account"
 import profileRoutes from "./routes/profile"
 import authRoutes from "./routes/auth"
+import assetRoutes from "./routes/asset"
 import mongoose from "mongoose"
 
 dotenv.config()
@@ -49,6 +50,7 @@ app.use("/user", userRoutes)
 app.use("/account", accountRoutes)
 app.use("/profile", profileRoutes)
 app.use("/auth", authRoutes)
+app.use("/asset", assetRoutes)
 
 app.listen(port, () => {
   console.log(`[server]: Server is running at http://localhost:${port}`)
