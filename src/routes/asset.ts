@@ -1,11 +1,11 @@
-import { Router } from 'express'
-import * as XLSX from 'xlsx'
 import type { File } from 'multer'
-import { parseToZodSchema } from '../../utils/parseToZodSchema'
-import AssetSchema from '../models/AssetSchema'
-import Asset from '../models/Asset'
-import User from '../models/User'
+import { Router } from 'express'
 import multer from 'multer'
+import * as XLSX from 'xlsx'
+import { parseToZodSchema } from '../../utils/parseToZodSchema'
+import Asset from '../models/Asset'
+import AssetSchema from '../models/AssetSchema'
+import User from '../models/User'
 
 const upload = multer({ storage: multer.memoryStorage() })
 const router = Router()
@@ -60,9 +60,8 @@ router.post('/import', upload.any(), async (req: any, res) => {
     res.send('Files processed')
   }
   catch (error) {
-    res.status(500).send('Error processing files')
+    res.status(500).send(`Error processing files: ${error}`)
   }
 })
-
 
 export default router

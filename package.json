@@ -1,28 +1,30 @@
 {
   "name": "mya-backend",
+  "type": "module",
   "version": "0.0.0",
   "description": "Manage Your Assets Express.js Backend",
-  "type": "module",
-  "main": "src/index.ts",
-  "scripts": {
-    "test": "test",
-    "dev": "nodemon --exec tsx src/index.ts"
-  },
+  "author": "Avery Howard",
+  "license": "ISC",
+  "homepage": "https://github.com/ahoward7/manage-your-assets-backend#readme",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/ahoward7/manage-your-assets-backend.git"
+  },
+  "bugs": {
+    "url": "https://github.com/ahoward7/manage-your-assets-backend/issues"
   },
   "keywords": [
     "express.js",
     "node.js",
     "backend"
   ],
-  "author": "Avery Howard",
-  "license": "ISC",
-  "bugs": {
-    "url": "https://github.com/ahoward7/manage-your-assets-backend/issues"
+  "main": "src/index.ts",
+  "scripts": {
+    "test": "test",
+    "dev": "nodemon --exec tsx src/index.ts",
+    "lint": "eslint . --ext .ts",
+    "lint:fix": "eslint . --ext .ts --fix"
   },
-  "homepage": "https://github.com/ahoward7/manage-your-assets-backend#readme",
   "dependencies": {
     "@types/xlsx": "^0.0.35",
     "bcryptjs": "^3.0.2",
@@ -36,8 +38,10 @@
     "zod": "^3.24.2"
   },
   "devDependencies": {
+    "@antfu/eslint-config": "^4.10.1",
     "@types/express": "^5.0.0",
     "@types/node": "^22.13.4",
+    "eslint": "^9.22.0",
     "tsx": "^4.19.2",
     "typescript": "^5.7.3"
   }
