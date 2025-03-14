@@ -1,9 +1,31 @@
 import { Router } from 'express'
+import User from '../models/User'
 
 const router = Router()
 
-router.get('/', (req, res) => {
-  res.send('get')
+router.get('/', async (req, res) => {
+  try {
+    const { search } = req.query
+
+    if (!search) {
+      const users = await User.find()
+      res.send(users)
+      return
+    }
+
+    const users = await User.find({
+      $or: [
+        { firstName: { $regex: search, $options: 'i' } },
+        { lastName: { $regex: search, $options: 'i' } },
+        { email: { $regex: search, $options: 'i' } },
+      ],
+    })
+
+    res.send(users)
+  }
+  catch (error) {
+    res.status(500).send(`Internal Server Error: ${error}`)
+  }
 })
 
 router.post('/', (req, res) => {
