@@ -2,6 +2,7 @@ import type { BaseAccount, BaseUser, GoogleAccount, LoginForm } from '../../inte
 import bcryptjs from 'bcryptjs'
 import { Router } from 'express'
 import Account from '../models/Account'
+import Profile from '../models/Profile'
 import User from '../models/User'
 
 function accountFromGoogleAccount(googleAccount: GoogleAccount): BaseAccount {
@@ -43,9 +44,11 @@ router.post('/google', async (req, res) => {
 
       const newUser = new User(userFromGoogle)
       const newAccount = new Account({ ...accountFromGoogle, user: newUser._id })
+      const newProfile = new Profile({ user: newUser._id, role: null, supervisor: null, employees: [], completed: false })
 
       newUser.save()
       newAccount.save()
+      newProfile.save()
 
       res.status(201).json(newUser)
       return
@@ -132,9 +135,11 @@ router.post('/register', async (req, res) => {
 
     const newUser = new User({ firstName, lastName, email, image })
     const newAccount = new Account({ user: newUser._id, email, password, client })
+    const newProfile = new Profile({ user: newUser._id, role: null, supervisor: null, employees: [], completed: false })
 
-    newUser.save()
-    newAccount.save()
+    await newUser.save()
+    await newAccount.save()
+    await newProfile.save()
 
     res.status(201).json(newUser)
   }
@@ -149,6 +154,51 @@ router.put('/user/:id', (req, res) => {
 
 router.put('/account/:id', (req, res) => {
   res.send('update account information')
+})
+
+router.put('/profile', async (req, res) => {
+  try {
+    const profile = req.body
+
+    const potentialProfile = await Profile.findOne({ user: profile.user })
+
+    if (potentialProfile) {
+      const updatedProfile = await Profile.updateOne({ user: profile.user }, profile)
+
+      if (updatedProfile) {
+        res.status(200).send('Profile updated')
+        return
+      }
+
+      res.status(500).send('Failed to update profile')
+    }
+  }
+  catch (error) {
+    res.status(500).send(error.message)
+  }
+})
+
+router.get('/profile', async (req, res) => {
+  try {
+    const { user } = req.query
+
+    if (!user) {
+      res.status(400).send('User id is required')
+      return
+    }
+
+    const profile = await Profile.findOne({ user })
+
+    if (!profile) {
+      res.status(404).send('Profile not found')
+      return
+    }
+
+    res.status(200).json(profile)
+  }
+  catch (error) {
+    res.status(500).send(error.message)
+  }
 })
 
 export default router
