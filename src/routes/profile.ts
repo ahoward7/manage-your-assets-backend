@@ -3,7 +3,7 @@ import Profile from '../models/Profile'
 
 const router = Router()
 
-router.get('/profile', async (req, res) => {
+router.get('/', async (req, res) => {
   try {
     const { user } = req.query
 
@@ -30,7 +30,7 @@ router.post('/', (req, res) => {
   res.send('post')
 })
 
-router.put('/profile', async (req, res) => {
+router.put('/', async (req, res) => {
   try {
     const profile = req.body
 

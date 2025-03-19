@@ -5,10 +5,16 @@ const router = Router()
 
 router.get('/', async (req, res) => {
   try {
-    const { search } = req.query
+    const { search, user: userId, users: userIds } = req.query
 
-    if (!search) {
-      const users = await User.find()
+    if (userId) {
+      const user = await User.findById(userId)
+      res.send(user)
+      return
+    }
+
+    if (userIds) {
+      const users = await User.find({ _id: { $in: userIds } })
       res.send(users)
       return
     }
